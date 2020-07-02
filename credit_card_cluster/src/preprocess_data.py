@@ -1,14 +1,18 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 
 def scale_values(data):
-    
+    # data = data.apply(lambda x: (x - x.mean())/ x.std())
+    scaler = StandardScaler()
+    scaled = scaler.fit_transform(data)
+    data = pd.DataFrame(scaled, columns=data.columns)
     return data
 
+
 def treat_outliers(data):
-    print (data['BALANCE'])
     data.plot(kind='box')
 
     for column in data.columns:
@@ -17,17 +21,11 @@ def treat_outliers(data):
         data[column] = np.where(data[column] > upper_bound, upper_bound, data[column])
         data[column] = np.where(data[column] < lower_bound, lower_bound, data[column])
 
-    # sns.catplot(x="BALANCE", kind="box", data=data)
-    Q1 = data.quantile(0.25)
-    print('ispod ovogaaa ehehhe')
-
+    #Q1 = data.quantile(0.25)
     # Q3 = data.quantile(0.75)
     # IQR = Q3 - Q1
-    # sns.catplot(x="BALANCE", kind="box", data=data)
-    # plt.show()
-
+    sns.catplot(x="BALANCE", kind="box", data=data)
     data.plot(kind='box')
-    plt.show()
     #
     # print(data.shape)
     # print(data < (Q1 - 1.5 * IQR)) | (data > (Q3 + 1.5 * IQR))
@@ -39,6 +37,7 @@ def treat_outliers(data):
     # data = data.applymap(lambda x: np.log(x + 1))
     # sns.catplot(x="BALANCE", kind="box", data=data)
     # plt.show()
+    plt.show()
     return data
 
 def remove_null_values(data):
@@ -57,7 +56,7 @@ def prepare_data(path):
     data = treat_outliers(data)
     data = scale_values(data)
 
-
+    print(data)
     #ODREDITI KORELACIJU I IZBACIITI NEPOTREBNE KOLONE
 
     return data
